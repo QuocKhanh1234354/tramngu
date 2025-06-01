@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vũ trụ trâm ngu</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: black;
+      font-family: 'Arial', sans-serif;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      z-index: 0;
+    }
+
+    .falling {
+      position: absolute;
+      color: #ffe066;
+      font-size: 36px;
+      font-weight: bold;
+      text-shadow: 0 0 10px #ffe066, 0 0 20px #ffe066;
+      animation: fall linear infinite;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    #music-button {
+      position: absolute;
+      z-index: 1000;
+      top: 20px;
+      left: 20px;
+      padding: 10px 20px;
+      background: #ffe066;
+      color: black;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ffe066;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🔊 Nút bật nhạc -->
+  <button id="music-button">🎵 Bật nhạc</button>
+  <audio id="bgm" src="phep-mau.mp3" loop></audio>
+
+  <script>
+    document.getElementById("music-button").addEventListener("click", () => {
+      const audio = document.getElementById("bgm");
+      audio.play();
+      document.getElementById("music-button").style.display = "none"; // Ẩn nút sau khi phát
+    });
+  </script>
+
+  <!-- Import Three.js -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const starGeometry = new THREE.BufferGeometry();
+    const starCount = 10000;
+    const positions = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount * 3; i++) {
+      positions[i] = (Math.random() - 0.5) * 2000;
+    }
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.7 });
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
+    camera.position.z = 500;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      stars.rotation.x += 0.0005;
+      stars.rotation.y += 0.0005;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    const fallingItems = ["trâm ngu", "☀️", "🌠"];
+    function createFallingItem() {
+      const el = document.createElement("div");
+      el.classList.add("falling");
+      el.textContent = fallingItems[Math.floor(Math.random() * fallingItems.length)];
+      el.style.left = Math.random() * window.innerWidth + "px";
+      el.style.animationDuration = (2 + Math.random() * 3).toFixed(2) + "s";
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 6000);
+    }
+
+    setInterval(() => {
+      for (let i = 0; i < 3; i++) createFallingItem();
+    }, 150);
+  </script>
+</body>
+</html>
