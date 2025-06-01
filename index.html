@@ -2,11 +2,14 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vũ trụ trâm ngu</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
       background-color: black;
       font-family: 'Arial', sans-serif;
@@ -29,6 +32,7 @@
       animation: fall linear infinite;
       pointer-events: none;
       z-index: 10;
+      white-space: nowrap;
     }
 
     @keyframes fall {
@@ -43,7 +47,7 @@
     }
 
     #music-button {
-      position: absolute;
+      position: fixed;
       z-index: 1000;
       top: 20px;
       left: 20px;
@@ -57,30 +61,44 @@
       cursor: pointer;
       box-shadow: 0 0 10px #ffe066;
     }
+
+    .footer-text {
+      position: fixed;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      color: #aaa;
+      font-size: 12px;
+      z-index: 100;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
 
-  <!-- 🔊 Nút bật nhạc -->
+  <!-- Nút bật nhạc -->
   <button id="music-button">🎵 Bật nhạc</button>
   <audio id="bgm" src="phep-mau.mp3" loop></audio>
+
+  <!-- Dòng chữ nhỏ -->
+  <div class="footer-text">qk map</div>
 
   <script>
     document.getElementById("music-button").addEventListener("click", () => {
       const audio = document.getElementById("bgm");
       audio.play();
-      document.getElementById("music-button").style.display = "none"; // Ẩn nút sau khi phát
+      document.getElementById("music-button").style.display = "none";
     });
   </script>
 
-  <!-- Import Three.js -->
+  <!-- Three.js -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-
   <script>
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio); // 👈 tối ưu cho màn hình retina/mobile
     document.body.appendChild(renderer.domElement);
 
     const starGeometry = new THREE.BufferGeometry();
@@ -107,6 +125,7 @@
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
     });
 
     const fallingItems = ["trâm ngu", "☀️", "🌠"];
